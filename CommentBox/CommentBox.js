@@ -27,17 +27,17 @@ class CommentBox extends Component {
       this.setState({
             minRows:this.props.minRows,
             maxRows:this.props.maxRows,
-            lineHeight:this.props.lineHeight,
       })
   }
   componentWillUnmount() {}
-
+  componentDidUpdate(){
+    console.log("Rerendered")
+  }
   watchSize = (event) => {
 
     //First lets also get the text from the box.
-    this.setState({
-       textBoxValue: event.target.value,
-    })
+    
+    
     const textareaLineHeight = this.state.lineHeight
     const { minRows, maxRows } = this.state
 
@@ -46,18 +46,38 @@ class CommentBox extends Component {
     const currentRows = ~~(event.target.scrollHeight / textareaLineHeight)
 
     if (currentRows === previousRows) {
+      console.log("current rows")
+
       event.target.rows = currentRows
     }
-
+   
     if (currentRows >= maxRows) {
       event.target.rows = maxRows
       event.target.scrollTop = event.target.scrollHeight
     }
+   
+    if(event.target.value===""){
+      // now it is blank again
+      this.setState({
+        value: event.target.value,
+        rows: minRows,
+      })
+     
+    }
+    else{
+     
+      this.setState({
+        value: event.target.value,
+        rows: currentRows < maxRows ? currentRows : maxRows,
+      },
+      ()=>{
+        console.log("textAreaLineHeight", textareaLineHeight)        
+        console.log("textAreaLineHeight", currentRows)
 
-    this.setState({
-      value: event.target.value,
-      rows: currentRows < maxRows ? currentRows : maxRows,
-    })
+      }
+      )
+    }
+   
   }
 
   render() {
@@ -68,7 +88,7 @@ class CommentBox extends Component {
             <CommentForm>
               <TextBox
                 onChange={this.watchSize}
-                rows={this.state.rows}
+                rows={this.state.rows ? this.state.rows : this.state.minRows}
                 placeholder={this.props.placeholder}
               />
               <PostButton onClick={this.props.onClickButton}>Post</PostButton>
@@ -121,7 +141,6 @@ const CommentContainer = styled.div`
   /* Dimensions */
   min-height: 56px;
   line-height: 18px;
-
   /* Margins */
   margin-top: 4px;
   margin-bottom: 0px;
@@ -137,6 +156,7 @@ const CommentContainer = styled.div`
   /* Aignments */
   display: flex;
   flex-shrink: 0;
+  flex-grow:1;
   flex-direction: column;
   vertical-align: baseline;
   justify-content: center;
@@ -151,6 +171,8 @@ const InnerContainer = styled.div`
   margin-right: 0px;
   margin-left: 0px;
 
+  /* Dimensions */ 
+  max-width:100%;
   /* Padding */
   padding-top: 0px;
   padding-right: 0px;
@@ -163,6 +185,9 @@ const CommentForm = styled.form`
   margin-bottom: 0px;
   margin-right: 0px;
   margin-left: 0px;
+
+  /* Dimensions */
+  max-width:100%;
 
   /* Padding */
   padding-top: 0px;
