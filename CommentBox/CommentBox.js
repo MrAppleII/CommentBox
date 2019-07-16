@@ -30,9 +30,7 @@ class CommentBox extends Component {
       })
   }
   componentWillUnmount() {}
-  componentDidUpdate(){
-    console.log("Rerendered")
-  }
+  
   watchSize = (event) => {
 
     //First lets also get the text from the box.
@@ -46,7 +44,7 @@ class CommentBox extends Component {
     const currentRows = ~~(event.target.scrollHeight / textareaLineHeight)
 
     if (currentRows === previousRows) {
-      console.log("current rows")
+     
 
       event.target.rows = currentRows
     }
@@ -69,11 +67,6 @@ class CommentBox extends Component {
       this.setState({
         value: event.target.value,
         rows: currentRows < maxRows ? currentRows : maxRows,
-      },
-      ()=>{
-        console.log("textAreaLineHeight", textareaLineHeight)        
-        console.log("textAreaLineHeight", currentRows)
-
       }
       )
     }
